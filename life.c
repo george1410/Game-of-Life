@@ -50,6 +50,34 @@ int countSurrounding(int* grid, int x, int y) {
     return count;
 }
 
+void evolve(int* grid) {
+    int* next = (int*) calloc(rows*cols, rows * cols * sizeof(int));
+    int i, j;
+    int count;
+    int val;
+    
+    for (i = 0; i < rows; i++) {
+        for (j = 0; j < cols; j++) {
+            val = getCell(grid, x, y);
+            count = countSurrounding(grid, j, i);
+            if (val == 1 && count < 2) {
+                setCell(next, j, i, 0);
+            } else if (val == 1 && count > 3) {
+                setCell(next, j, i, 0);
+            } else if (val == 1) {
+                setCell(next, j, i, 1);
+            } else if (val == 0 && count == 3) {
+                setCell(next, j, i, 1);
+            } else {
+                setCell(next, j, i, 0);
+            }
+        }
+    }
+    
+    memcpy(grid, next, cols*rows*sizeof(*grid));
+    free(next);
+}
+
 int main(int argc, char* argv[]) {
     int* grid = (int*) calloc(rows*cols, rows * cols * sizeof(int));
 
