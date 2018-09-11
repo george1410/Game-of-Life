@@ -19,6 +19,10 @@ void setCell(int* grid, int x, int y, int val) {
 int main(int argc, char* argv[]) {
     int* grid = (int*) calloc(rows*cols, rows * cols * sizeof(int));
     
+    setCell(grid, 1, 1, 1);
+    setCell(grid, 1, 2, 1);
+    setCell(grid, 1, 3, 1);
+
     free(grid);
     return 0;
 }
