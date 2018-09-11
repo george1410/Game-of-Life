@@ -37,6 +37,19 @@ void clearScreen() {
     }
 }
 
+int countSurrounding(int* grid, int x, int y) {
+    int i, j;
+    int count = 0;
+    for (i = y-1; i <= y+1; i++) {
+        for (j = x-1; j <= x+1; j++) {
+            if (i >= 0 && i < cols && j >= 0 && j < rows && !(i == y && j == x) && getCell(grid, i, j) == 1) {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
 int main(int argc, char* argv[]) {
     int* grid = (int*) calloc(rows*cols, rows * cols * sizeof(int));
 
