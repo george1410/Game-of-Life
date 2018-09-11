@@ -30,6 +30,13 @@ void printGrid(int* grid) {
     }
 }
 
+void clearScreen() {
+    int i;
+    for (i = 0; i < 10; i++) {
+        printf("\n\n\n\n\n\n\n\n\n\n");
+    }
+}
+
 int main(int argc, char* argv[]) {
     int* grid = (int*) calloc(rows*cols, rows * cols * sizeof(int));
 
@@ -37,6 +44,7 @@ int main(int argc, char* argv[]) {
     setCell(grid, 1, 2, 1);
     setCell(grid, 1, 3, 1);
 
+    clearScreen();
     printGrid(grid);
 
     free(grid);
