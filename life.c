@@ -5,12 +5,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int main(int argc, char* argv[])
-{
-    int rows = 20;
-    int cols = 60;
+int rows = 20;
+int cols = 60;
+
+int getCell(int* grid, int x, int y) {
+    return *(grid + y*cols + x);
+}
+
+void setCell(int* grid, int x, int y, int val) {
+    *(grid + y*cols + x) = val;
+}
+
+int main(int argc, char* argv[]) {
     int* grid = (int*) calloc(rows*cols, rows * cols * sizeof(int));
-    
     
     free(grid);
     return 0;
