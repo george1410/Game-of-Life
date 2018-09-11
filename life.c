@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 int rows = 20;
 int cols = 60;
@@ -83,9 +84,17 @@ int main(int argc, char* argv[]) {
     int* grid = (int*) calloc(rows*cols, rows * cols * sizeof(int));
 
     setCell(grid, 1, 1, 1);
-    setCell(grid, 1, 2, 1);
     setCell(grid, 1, 3, 1);
+    setCell(grid, 2, 3, 1);
+    setCell(grid, 3, 3, 1);
+    setCell(grid, 3, 2, 1);
 
+    while (1) {
+        clearScreen();
+        printGrid(grid);
+        evolve(grid);
+        sleep(1);
+    }
 
     free(grid);
     return 0;
