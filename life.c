@@ -14,8 +14,12 @@ int getCell(int* grid, int x, int y) {
     return *(grid + y*cols + x);
 }
 
-void setCell(int* grid, int x, int y, int val) {
-    *(grid + y*cols + x) = val;
+void dead(int* grid, int x, int y) {
+    *(grid + y*cols + x) = 0;
+}
+
+void alive(int* grid, int x, int y) {
+    *(grid + y*cols + x) = 1;
 }
 
 void printGrid(int* grid) {
@@ -63,15 +67,15 @@ void evolve(int* grid) {
             val = getCell(grid, j, i);
             count = countSurrounding(grid, j, i);
             if (val == 1 && count < 2) {
-                setCell(next, j, i, 0);
+                dead(next, j, i);
             } else if (val == 1 && count > 3) {
-                setCell(next, j, i, 0);
+                dead(next, j, i);
             } else if (val == 1) {
-                setCell(next, j, i, 1);
+                alive(next, j, i);
             } else if (val == 0 && count == 3) {
-                setCell(next, j, i, 1);
+                alive(next, j, i);
             } else {
-                setCell(next, j, i, 0);
+                dead(next, j, i);
             }
         }
     }
@@ -87,11 +91,11 @@ int main(int argc, char* argv[]) {
         500000000L 
     };
 
-    setCell(grid, 1, 1, 1);
-    setCell(grid, 1, 3, 1);
-    setCell(grid, 2, 3, 1);
-    setCell(grid, 3, 3, 1);
-    setCell(grid, 3, 2, 1);
+    alive(grid, 1, 1);
+    alive(grid, 1, 3);
+    alive(grid, 2, 3);
+    alive(grid, 3, 3);
+    alive(grid, 3, 2);
 
     while (1) {
         clearScreen();
