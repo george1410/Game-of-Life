@@ -33,11 +33,12 @@ void printGrid() {
     for (i = 0; i < rows; i++) {
         for (j = 0; j < cols; j++) {
             if (getCell(j, i) == 0) {
-                printf(" ");
+                printf("%2s", "");
             } else {
-                printf("*");
+                printf("%2s", "*");
             }
         }
+        printf("\n");
     }
 }
 
