@@ -9,30 +9,35 @@
 
 int rows = 20;
 int cols = 60;
+int* grid;
+int* next;
 
-int getCell(int* grid, int x, int y) {
+int getCell(int x, int y) {
     return *(grid + y*cols + x);
 }
 
-void dead(int* grid, int x, int y) {
-    *(grid + y*cols + x) = 0;
-}
-
-void alive(int* grid, int x, int y) {
+void alive(int x, int y) {
     *(grid + y*cols + x) = 1;
 }
 
-void printGrid(int* grid) {
+void deadN(int x, int y) {
+    *(next + y*cols + x) = 0;
+}
+
+void aliveN(int x, int y) {
+    *(next + y*cols + x) = 1;
+}
+
+void printGrid() {
     int i, j;
     for (i = 0; i < rows; i++) {
         for (j = 0; j < cols; j++) {
-            if (getCell(grid, j, i) == 0) {
+            if (getCell(j, i) == 0) {
                 printf(" ");
             } else {
                 printf("*");
             }
         }
-        printf("\n");
     }
 }
 
@@ -43,12 +48,12 @@ void clearScreen() {
     }
 }
 
-int countSurrounding(int* grid, int x, int y) {
+int countSurrounding(int x, int y) {
     int i, j;
     int count = 0;
     for (i = y-1; i <= y+1; i++) {
         for (j = x-1; j <= x+1; j++) {
-            if (i >= 0 && i < cols && j >= 0 && j < rows && !(i == y && j == x) && getCell(grid, j, i) == 1) {
+            if (i >= 0 && i < cols && j >= 0 && j < rows && !(i == y && j == x) && getCell(j, i) == 1) {
                 count++;
             }
         }
@@ -56,26 +61,26 @@ int countSurrounding(int* grid, int x, int y) {
     return count;
 }
 
-void evolve(int* grid) {
-    int* next = (int*) calloc(rows*cols, rows * cols * sizeof(int));
+void evolve() {
+    next = (int*) calloc(rows*cols, rows * cols * sizeof(int));
     int i, j;
     int count;
     int val;
     
     for (i = 0; i < rows; i++) {
         for (j = 0; j < cols; j++) {
-            val = getCell(grid, j, i);
-            count = countSurrounding(grid, j, i);
+            val = getCell(j, i);
+            count = countSurrounding(j, i);
             if (val == 1 && count < 2) {
-                dead(next, j, i);
+                deadN(j, i);
             } else if (val == 1 && count > 3) {
-                dead(next, j, i);
+                deadN(j, i);
             } else if (val == 1) {
-                alive(next, j, i);
+                aliveN(j, i);
             } else if (val == 0 && count == 3) {
-                alive(next, j, i);
+                aliveN(j, i);
             } else {
-                dead(next, j, i);
+                deadN(j, i);
             }
         }
     }
@@ -85,22 +90,22 @@ void evolve(int* grid) {
 }
 
 int main(int argc, char* argv[]) {
-    int* grid = (int*) calloc(rows*cols, rows * cols * sizeof(int));
+    grid = (int*) calloc(rows*cols, rows * cols * sizeof(int));
     struct timespec ts = {
         0, 
         500000000L 
     };
 
-    alive(grid, 1, 1);
-    alive(grid, 1, 3);
-    alive(grid, 2, 3);
-    alive(grid, 3, 3);
-    alive(grid, 3, 2);
+    alive(1, 1);
+    alive(1, 3);
+    alive(2, 3);
+    alive(3, 3);
+    alive(3, 2);
 
     while (1) {
         clearScreen();
-        printGrid(grid);
-        evolve(grid);
+        printGrid();
+        evolve();
         nanosleep (&ts, NULL);
     }
 
