@@ -1,6 +1,6 @@
-/* Implementation of Conway's Game of Life ('Life') */
-/* George McCarron 2018 */
-/* Implements rules as stated at: https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life */
+/* Implementation of Conway's Game of Life ('Life')
+ * George McCarron
+ * Implements rules as stated at: https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,22 +18,22 @@ struct timespec ts = {
         200000000L 
 };
 
+// returns whether the given cell is alive or dead
 int getCell(int x, int y) {
     return *(grid + y*cols + x);
 }
 
+// sets the value of the given cell in the current grid to 1.
 void initial(int x, int y) {
     *(grid + y*cols + x) = 1;
 }
 
-void dead(int x, int y) {
-    *(next + y*cols + x) = 0;
-}
-
+// sets the value of the given cell in the next grid to 1.
 void alive(int x, int y) {
     *(next + y*cols + x) = 1;
 }
 
+// Sets up the game: calculates grid size, initializes grid with random initial state.
 void initialise() {
     int i, j;
     struct winsize w;
@@ -53,6 +53,7 @@ void initialise() {
     }
 }
 
+// Clears the console between evolutions.
 void clearScreen() {
     int i;
 
@@ -61,6 +62,7 @@ void clearScreen() {
     }
 }
 
+// Prints the current evolution of the game.
 void printGrid() {
     int i, j;
 
@@ -76,6 +78,7 @@ void printGrid() {
     }
 }
 
+// Returns the number of living cells surrounding the given cell.
 int countSurrounding(int x, int y) {
     int i, j;
     int count = 0;
@@ -83,13 +86,16 @@ int countSurrounding(int x, int y) {
     for (i = y-1; i <= y+1; i++) {
         for (j = x-1; j <= x+1; j++) {
             if (i >= 0 && i < rows && j >= 0 && j < cols && !(i == y && j == x) && getCell(j, i)) {
-                count++;
+                if (++count > 3) {
+                    return count;
+                }
             }
         }
     }
     return count;
 }
 
+// Moves the game board one evolution forward.
 void evolve() {
     int i, j;
     int count;
@@ -104,8 +110,6 @@ void evolve() {
            // This is where the Game of Life rules are actually implemented
             if ((val && (count == 2 || count == 3)) || (!val && count == 3)) {
                 alive(j, i);
-            } else {
-                dead(j, i);
             }
         }
     }
@@ -116,6 +120,7 @@ void evolve() {
 int main(int argc, char* argv[]) {
     initialise();
 
+    // main game loop
     while (1) {
         clearScreen();
         printGrid();
