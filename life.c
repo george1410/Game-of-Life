@@ -18,20 +18,21 @@ int getCell(int x, int y) {
     return *(grid + y*cols + x);
 }
 
-void alive(int x, int y) {
+void initial(int x, int y) {
     *(grid + y*cols + x) = 1;
 }
 
-void deadN(int x, int y) {
+void dead(int x, int y) {
     *(next + y*cols + x) = 0;
 }
 
-void aliveN(int x, int y) {
+void alive(int x, int y) {
     *(next + y*cols + x) = 1;
 }
 
 void printGrid() {
     int i, j;
+
     for (i = 0; i < rows; i++) {
         for (j = 0; j < cols; j++) {
             if (getCell(j, i) == 0) {
@@ -46,6 +47,7 @@ void printGrid() {
 
 void clearScreen() {
     int i;
+
     for (i = 0; i < 10; i++) {
         printf("\n\n\n\n\n\n\n\n\n\n");
     }
@@ -54,6 +56,7 @@ void clearScreen() {
 int countSurrounding(int x, int y) {
     int i, j;
     int count = 0;
+
     for (i = y-1; i <= y+1; i++) {
         for (j = x-1; j <= x+1; j++) {
             if (i >= 0 && i < rows && j >= 0 && j < cols && !(i == y && j == x) && getCell(j, i) == 1) {
@@ -74,16 +77,12 @@ void evolve() {
         for (j = 0; j < cols; j++) {
             val = getCell(j, i);
             count = countSurrounding(j, i);
-            if (val == 1 && count < 2) {
-                deadN(j, i);
-            } else if (val == 1 && count > 3) {
-                deadN(j, i);
-            } else if (val == 1) {
-                aliveN(j, i);
-            } else if (val == 0 && count == 3) {
-                aliveN(j, i);
+           
+           // This is where the Game of Life rules are actually implemented
+            if ((val && (count == 2 || count == 3)) || (!val && count == 3)) {
+                alive(j, i);
             } else {
-                deadN(j, i);
+                dead(j, i);
             }
         }
     }
@@ -107,8 +106,8 @@ int main(int argc, char* argv[]) {
 
     for (i = 0; i < rows; i++) {
         for (j = 0; j < cols; j ++) {
-            if(rand() % 2) {
-                alive(j, i);
+            if (rand() % 2) {
+                initial(j, i);
             }
         }
     }
@@ -118,8 +117,7 @@ int main(int argc, char* argv[]) {
         printGrid();
         evolve();
         nanosleep (&ts, NULL);
-    }
-    
+    }    
 
     free(grid);
     return 0;
