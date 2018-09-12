@@ -13,6 +13,10 @@ int rows;
 int cols;
 int* grid;
 int* next;
+struct timespec ts = {
+        0, 
+        200000000L 
+};
 
 int getCell(int x, int y) {
     return *(grid + y*cols + x);
@@ -30,6 +34,33 @@ void alive(int x, int y) {
     *(next + y*cols + x) = 1;
 }
 
+void initialise() {
+    int i, j;
+    struct winsize w;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+    rows = w.ws_row - 1;
+    cols = w.ws_col / 2;
+    grid = (int*) calloc(rows*cols, rows * cols * sizeof(int));
+
+    srand(time(NULL));
+
+    for (i = 0; i < rows; i++) {
+        for (j = 0; j < cols; j ++) {
+            if (rand() % 2) {
+                initial(j, i);
+            }
+        }
+    }
+}
+
+void clearScreen() {
+    int i;
+
+    for (i = 0; i <= rows; i++) {
+        printf("\n");
+    }
+}
+
 void printGrid() {
     int i, j;
 
@@ -45,21 +76,13 @@ void printGrid() {
     }
 }
 
-void clearScreen() {
-    int i;
-
-    for (i = 0; i < 10; i++) {
-        printf("\n\n\n\n\n\n\n\n\n\n");
-    }
-}
-
 int countSurrounding(int x, int y) {
     int i, j;
     int count = 0;
 
     for (i = y-1; i <= y+1; i++) {
         for (j = x-1; j <= x+1; j++) {
-            if (i >= 0 && i < rows && j >= 0 && j < cols && !(i == y && j == x) && getCell(j, i) == 1) {
+            if (i >= 0 && i < rows && j >= 0 && j < cols && !(i == y && j == x) && getCell(j, i)) {
                 count++;
             }
         }
@@ -68,11 +91,11 @@ int countSurrounding(int x, int y) {
 }
 
 void evolve() {
-    next = (int*) calloc(rows*cols, rows * cols * sizeof(int));
     int i, j;
     int count;
     int val;
     
+    next = (int*) calloc(rows * cols, rows * cols * sizeof(int));
     for (i = 0; i < rows; i++) {
         for (j = 0; j < cols; j++) {
             val = getCell(j, i);
@@ -91,26 +114,7 @@ void evolve() {
 }
 
 int main(int argc, char* argv[]) {
-    int i, j;
-    struct timespec ts = {
-        0, 
-        200000000L 
-    };
-    struct winsize w;
-    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-    rows = w.ws_row - 1;
-    cols = w.ws_col / 2;
-    grid = (int*) calloc(rows*cols, rows * cols * sizeof(int));
-
-    srand(time(NULL));
-
-    for (i = 0; i < rows; i++) {
-        for (j = 0; j < cols; j ++) {
-            if (rand() % 2) {
-                initial(j, i);
-            }
-        }
-    }
+    initialise();
 
     while (1) {
         clearScreen();
