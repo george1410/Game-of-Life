@@ -56,7 +56,7 @@ int countSurrounding(int x, int y) {
     int count = 0;
     for (i = y-1; i <= y+1; i++) {
         for (j = x-1; j <= x+1; j++) {
-            if (i >= 0 && i < cols && j >= 0 && j < rows && !(i == y && j == x) && getCell(j, i) == 1) {
+            if (i >= 0 && i < rows && j >= 0 && j < cols && !(i == y && j == x) && getCell(j, i) == 1) {
                 count++;
             }
         }
@@ -87,12 +87,12 @@ void evolve() {
             }
         }
     }
-    
-    memcpy(grid, next, cols*rows*sizeof(*grid));
+    memcpy(grid, next, cols * rows * sizeof(*grid));
     free(next);
 }
 
 int main(int argc, char* argv[]) {
+    int i, j;
     struct timespec ts = {
         0, 
         200000000L 
@@ -103,7 +103,16 @@ int main(int argc, char* argv[]) {
     cols = w.ws_col / 2;
     grid = (int*) calloc(rows*cols, rows * cols * sizeof(int));
 
-    
+    srand(time(NULL));
+
+    for (i = 0; i < rows; i++) {
+        for (j = 0; j < cols; j ++) {
+            if(rand() % 2) {
+                alive(j, i);
+            }
+        }
+    }
+
     while (1) {
         clearScreen();
         printGrid();
