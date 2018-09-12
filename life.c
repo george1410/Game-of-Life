@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
+#include <time.h>
 
 int rows = 20;
 int cols = 60;
@@ -82,6 +82,10 @@ void evolve(int* grid) {
 
 int main(int argc, char* argv[]) {
     int* grid = (int*) calloc(rows*cols, rows * cols * sizeof(int));
+    struct timespec ts = {
+        0, 
+        500000000L 
+    };
 
     setCell(grid, 1, 1, 1);
     setCell(grid, 1, 3, 1);
@@ -93,7 +97,7 @@ int main(int argc, char* argv[]) {
         clearScreen();
         printGrid(grid);
         evolve(grid);
-        sleep(1);
+        nanosleep (&ts, NULL);
     }
 
     free(grid);
