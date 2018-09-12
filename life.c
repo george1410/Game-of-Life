@@ -6,9 +6,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
 
-int rows = 20;
-int cols = 60;
+int rows;
+int cols;
 int* grid;
 int* next;
 
@@ -91,24 +93,29 @@ void evolve() {
 }
 
 int main(int argc, char* argv[]) {
-    grid = (int*) calloc(rows*cols, rows * cols * sizeof(int));
     struct timespec ts = {
         0, 
         500000000L 
     };
+    struct winsize w;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+    rows = w.ws_row - 1;
+    cols = w.ws_col / 2;
+    grid = (int*) calloc(rows*cols, rows * cols * sizeof(int));
 
     alive(1, 1);
     alive(1, 3);
     alive(2, 3);
     alive(3, 3);
     alive(3, 2);
-
+    
     while (1) {
         clearScreen();
         printGrid();
         evolve();
         nanosleep (&ts, NULL);
     }
+    
 
     free(grid);
     return 0;
